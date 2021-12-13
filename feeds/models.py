@@ -38,7 +38,9 @@ class Source(models.Model):
     
     is_cloudflare  = models.BooleanField(default=False)
 
-    
+    class Meta:
+        app_label = 'feed'
+
     def __str__(self):
         return self.display_name
     
@@ -119,6 +121,9 @@ class Post(models.Model):
     index         = models.IntegerField(db_index=True)
     image_url     = models.CharField(max_length=512, blank=True,null=True)
 
+    class Meta:
+        app_label = 'feeds'
+        ordering = ["index"]
 
     @property
     def title_url_encoded(self):
@@ -144,16 +149,17 @@ class Post(models.Model):
         
         return "/post/%d/" % self.id
 
-    class Meta:
-        ordering = ["index"]
-        
+
 class Enclosure(models.Model):
 
     post   = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='enclosures')
     length = models.IntegerField(default=0)
     href   = models.CharField(max_length=512)
     type   = models.CharField(max_length=256) 
-    
+
+    class Meta:
+        app_label = 'feeds'
+
     @property
     def recast_link(self):
     
@@ -171,7 +177,10 @@ class WebProxy(models.Model):
     # this class if for Cloudflare avoidance and contains a list of potential
     # web proxies that we can try, scraped from the internet
     address = models.CharField(max_length=255)
-    
+
+    class Meta:
+        app_label = 'feeds'
+
     def __str__(self):
         return "Proxy:{}".format(self.address)
 
